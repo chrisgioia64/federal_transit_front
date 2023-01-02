@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>Federal Transit</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/query.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.1/datatables.min.css"/>
+
+</head>
+
+<body>
+
+<header>
+
+    <nav>
+
+    </nav>
+</header>
+
+<main>
+    <div id="query_panel">
+    <table id="query_table">
+        <tr>
+            <td class="col_1">Aggregate Statistic</td>
+            <td class="col_2">
+                <select id="aggregate_statistic" name="aggregate_statistic">
+                    <option value="UPT">Unlinked Passenger Trips</option>
+                    <option value="PASSENGER_MILES">Passenger Miles</option>
+                    <option value="OPERATING_EXPENSES">Operating Expenses</option>
+                    <option value="FARE">Fares</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="col_1">Entity Type</td>
+            <td class="col_2">
+                <select id="entity_type" name="entity_type">
+                    <option value="AGENCY">Agency Name</option>
+                    <option value="CITY">City</option>
+                    <option value="STATE">State</option>
+                    <option value="METRO">Metro</option>
+                    <option value="AGENCY_MODE">Agency Mode</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="col_1">
+
+            </td>
+            <td class="col_2">
+                <input id="search_button" type="button" value="Search">
+            </td>
+        </tr>
+    </table>
+    </div>    
+
+    <div id="results_panel">
+        <table id="result_table">
+            <thead>
+
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <div id="pagination_subpanel">
+            <button id="prev_button" value="Prev">Prev</button>
+            <button id="next_button" value="Next">Next</button>
+        </div>
+    </div>
+</main>
+
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.1/datatables.min.js"></script>
+<script src="scripts/query.js"></script>
+
+</body>
+</html>

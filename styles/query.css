@@ -1,0 +1,104 @@
+body {
+  background-color: rgb(230,230,230);
+}
+
+h1 {
+  text-align: center;
+  color: blue;
+}
+
+#query_panel {
+  margin: 0 auto;
+  width: 400px;
+  padding: 5px;
+  border-radius: 0.3em;
+  /* border: 2px inset rgb(0,0,200); */
+}
+
+
+#query_table {
+  text-align: center;
+}
+
+#query_table select {
+  width: 180px;
+}
+
+#result_panel {
+  margin: 0 auto;
+}
+
+#result_table .col_rank {
+    width: 20px;
+}
+
+#result_table .col_entity {
+    width: 500px;
+}
+
+#result_table .col_statistic {
+    width: 180px;
+}
+
+#result_table {
+/*     height: 350px; */
+}
+
+#result_table {
+  font-size: 0.9em;
+  height: 400px;
+}
+
+#result_table tr {
+    height: 20px;
+}
+
+#result_table .row_header {
+    font-weight: bold;
+    background-color: rgb(220, 230, 255);
+}
+
+#results_panel {
+    margin: 0 auto;
+    margin-top: 10px;
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 0.3em;
+    padding: 5px;
+    width: 680px;
+    background-color: rgb(245,245,245);
+}
+
+#pagination_subpanel {
+  display: none;
+}
+
+#pagination_subpanel button {
+  font-size: 1.0rem;
+  background-color: transparent;
+  border: none;
+  margin: 0.25rem 0.25rem;
+  cursor: pointer;
+  height: 2.0rem;
+  width: 3.0rem;
+  border-radius: .2rem;
+  color: blue;
+  display: none;
+
+}
+
+#pagination_subpanel button:disabled {
+  color: rgb(100,100,100);
+/*     display: none; */
+}
+
+#pagination_subpanel button:not(.disabled):hover {
+  background: #fff;
+}
+
+#pagination_subpanel {
+    display: flex;
+  align-items: center;
+/*   position: absolute; */
+  bottom: 0;
+  justify-content: center;
+}
