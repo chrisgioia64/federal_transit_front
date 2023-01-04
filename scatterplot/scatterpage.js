@@ -115,9 +115,56 @@ function FormComponent(props) {
 }
 
 function ScatterPlotComponent(props) {
+    useEffect(() => {
+        updatePlot(props.scatter);
+    }, [props.scatter])
+
     return (
-        <div></div>
+        <div id="scatter_plot">
+
+        </div>
     )
+}
+
+function updatePlot(scatterData) {
+    // return;
+    console.log("scatter data: " + scatterData);
+    if (scatterData == [] || scatterData == null) {
+        console.log("empty")
+        return;
+    }
+
+    let cars = scatterData;
+    // let cars = [];
+    // cars.push({'name': 'New York, NY', 'population_rank': 1, 'rate_rank': 1});
+    // cars.push({'name': 'Los Angeles', 'population_rank': 2, 'rate_rank': 3});
+    // cars.push({'name': 'Chicago', 'population_rank': 3, 'rate_rank': 4});
+    // cars.push({'name': 'Houston', 'population_rank': 4, 'rate_rank': 2});
+
+    let width = 700;
+
+    let pop_rank_function = (d) => d.entity1.totalRank;
+    let rate_rank_function = (d) => d.entity2.totalRank;
+    let metro_name = (d) => d.metropolitanArea;
+
+    // let pop_rank_function = (d) => d.population_rank;
+    // let rate_rank_function = (d) => d.rate_rank;
+
+    let chart = Scatterplot(cars, {
+        x: pop_rank_function,
+        y: rate_rank_function,
+        title: metro_name,
+        xLabel: "X →",
+        yLabel: "↑ Y",
+        stroke: "steelblue",
+        width,
+        height: 600
+    })
+
+    let chartDiv = document.querySelector("#scatter_plot");
+    chartDiv.innerHTML = "";
+    // chartDiv.empty();
+    chartDiv.append(chart);  
 }
 
 var datatable = null;

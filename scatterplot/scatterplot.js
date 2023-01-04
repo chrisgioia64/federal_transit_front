@@ -112,31 +112,29 @@ function Scatterplot(data, {
     return svg.node();
   }
 
-let cars = [];
-cars.push({'name': 'New York, NY', 'population_rank': 1, 'rate_rank': 1});
-cars.push({'name': 'Los Angeles', 'population_rank': 2, 'rate_rank': 3});
-cars.push({'name': 'Chicago', 'population_rank': 3, 'rate_rank': 4});
-cars.push({'name': 'Houston', 'population_rank': 4, 'rate_rank': 2});
+// let cars = [];
+// cars.push({'name': 'New York, NY', 'population_rank': 1, 'rate_rank': 1});
+// cars.push({'name': 'Los Angeles', 'population_rank': 2, 'rate_rank': 3});
+// cars.push({'name': 'Chicago', 'population_rank': 3, 'rate_rank': 4});
+// cars.push({'name': 'Houston', 'population_rank': 4, 'rate_rank': 2});
 
-let width = 300;
-
-
-let pop_rank_function = (d) => d.population_rank;
-let rate_rank_function = (d) => d.rate_rank;
-
-chart = Scatterplot(cars, {
-    x: pop_rank_function,
-    y: rate_rank_function,
-    title: d => d.name,
-    xLabel: "Population →",
-    yLabel: "↑ Rate",
-    stroke: "steelblue",
-    width,
-    height: 600
-  })
+// let width = 300;
 
 
-  let chartDiv = document.querySelector("#chart");
-  chartDiv.append(chart);
-  
+// let rank1 = (d) => d.entity1.totalRank;
+// let rank2 = (d) => d.entity2.totalRank;
+
+// chart = Scatterplot(cars, {
+//     x: rank1,
+//     y: rank2,
+//     title: d => d.name,
+//     xLabel: "Population →",
+//     yLabel: "↑ Rate",
+//     stroke: "steelblue",
+//     width,
+//     height: 600
+//   })
+
+//   let chartDiv = document.querySelector("#chart");
+//   chartDiv.append(chart);
   
