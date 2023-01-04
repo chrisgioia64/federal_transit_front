@@ -1,0 +1,77 @@
+#query_panel {
+    margin: 0 auto;
+    width: 400px;
+    padding: 5px;
+    border-radius: 0.3em;
+    /* border: 2px inset rgb(0,0,200); */
+    font-size: 0.8em;
+}
+
+#query_panel select {
+    font-size: 0.9em;
+    height: 30px;
+}
+
+#query_panel input {
+    font-size: 0.9em;
+    height: 30px;
+    margin: 0 auto;
+}
+  
+.col_1 {
+    width: 250px;
+}
+
+.col_2 {
+    width: 250px;
+}
+
+
+#scatter_table_panel {
+    margin: 0 auto;
+    margin-top: 10px;
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 0.3em;
+    padding: 5px;
+    width: 680px;
+    background-color: rgb(245,245,245);
+    font-size: 0.8em;
+}
+  
+#scatter_table tr {
+    height: 20px;
+}
+  
+#scatter_table thead {
+    font-weight: bold;
+    background-color: rgb(0, 150, 255);
+    color: rgb(255, 255, 255);
+}
+
+#scatter_table .scatter_table_col_1 {
+    width: 300px;
+}
+ 
+#scatter_table .scatter_table_col_2 {
+    width: 90px;
+}
+
+#scatter_table .scatter_table_col_3 {
+    width: 90px;
+}
+
+#scatter_table .scatter_table_col_4 {
+    width: 90px;
+}
+
+#scatter_table .scatter_table_col_5 {
+    width: 90px;
+}
+  
+.row_odd {
+    background-color: rgb(240, 240, 240);
+}
+
+.row_even {
+    background-color: rgb(255, 255, 255);
+}

@@ -4,3 +4,7 @@ main {
     background-color: white;
     height: 100%;
 }
+
+body {
+    background-color: rgb(230,230,230);
+  }
