@@ -221,9 +221,9 @@ function TableRowComponent(props) {
     return (
         <tr className={row_shade}>
             <td className="scatter_table_col_1">{row.metropolitanArea}</td>
-            <td className="scatter_table_col_2">{row.entity1.totalAmount}</td>
+            <td className="scatter_table_col_2">{row.entity1.totalAmount.toLocaleString()}</td>
             <td className="scatter_table_col_3">{row.entity1.totalRank}</td>
-            <td className="scatter_table_col_4">{row.entity2.totalAmount}</td>
+            <td className="scatter_table_col_4">{row.entity2.totalAmount.toLocaleString()}</td>
             <td className="scatter_table_col_5">{row.entity2.totalRank}</td>
         </tr>
     )

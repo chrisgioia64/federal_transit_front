@@ -24,6 +24,37 @@ window.onload = function() {
         loadResults(pageNumber);
     });
 
+    const resultsDownload = document.querySelector("#results_download_button");
+    resultsDownload.addEventListener('click', () => {
+            downloadCsv();  
+    });
+
+}
+
+async function downloadCsv() {
+    const statisticElement = document.querySelector("#aggregate_statistic");
+    const entityType = document.querySelector("#entity_type");
+    
+    let entityValue = entityType.options[entityType.selectedIndex].text;
+    let aggregateValue = statisticElement.options[statisticElement.selectedIndex].text;
+
+    var str = "rank; " + entityValue + ";" + aggregateValue + "\n";
+    for (let i = 0; i < resultsGlobal.length; i++) {
+        str += (i + 1) + ";";
+        str += resultsGlobal[i].entityName + ";";
+        str += resultsGlobal[i].aggregateStatistic + "\n";
+    }
+
+    // const url = window.URL.createObjectURL(str);
+
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(str);
+    hiddenElement.target = '_blank';
+    
+    //provide the name for the CSV file to be downloaded
+    hiddenElement.download = 'results.csv';
+    hiddenElement.click();
+
 }
 
 var resultsGlobal = [];

@@ -2,9 +2,9 @@ main {
     margin: 0 auto;
     width: 800px;
     background-color: white;
-    height: 100%;
+    padding-bottom: 10px;
 }
 
 body {
     background-color: rgb(230,230,230);
-  }
+}

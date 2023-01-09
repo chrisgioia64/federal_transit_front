@@ -37,7 +37,6 @@ async function loadMasterAPI(setResponse) {
       
     const response = await fetch("http://localhost:8081/database/load_master/1", requestOptions)
     let text = await response.text();
-    console.log("text: " + text);
     setResponse(text);
     return text;
 }
@@ -51,7 +50,6 @@ async function numAgenciesAPI(setResponse) {
       
     const response = await fetch("http://localhost:8081/database/num_agencies", requestOptions)
     let text = await response.text();
-    console.log("text: " + text);
     setResponse(text);
     return text;
 }

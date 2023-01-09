@@ -88,30 +88,248 @@ function MetroAreaCard(props) {
 
     function toggleDisplay() {
         setShow( x => !x);
-        console.log("show: " + show);
     }
 
     return (
         <div id={divId} className="metro_card">
         <div className="metro_card_title">
-        <button onClick={toggleDisplay} className="btn btn-link" type="button" data-toggle="collapse" data-target={containerIdHash} aria-expanded="true" aria-controls={containerId}>
+        <button onClick={toggleDisplay} className="btn btn-link" type="button" aria-expanded="true" aria-controls={containerId}>
           {props.metro}
         </button>
 
         </div>
-        <div className="metro_card_content collapse show" id={containerId}
+        <div className="metro_card_content" id={containerId}
             data-parent={divIdHash}>
             {show && <MetroAreaTable metro={props.metro} key={props.metro} />}
+            {show && <MetroAreaTransitChart metro={props.metro} />}
+            {show && <MetroAreaStackedBarChart metro={props.metro} />}
+            {show && <MetroTimeSeriesData metro={props.metro} />}
         </div>
         </div>)
 }
 
+function MetroTimeSeriesData(props) {
+    let metro = props.metro;
+    let [agency, setAgency] = useState([]);
+    let cardId = "metro_card_timeseries_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+    let agencyNameId = cardId + "_agency_name";
+    let agencyModeId = cardId + "_agency_mode";
+    let graphId = cardId + "_graph";
+
+    let [agencyModes, setAgencyModes] = useState([]);
+
+    let [graphData, setGraphData] = useState([]);
+
+    useEffect(() => {
+        setAgencies(setAgency, metro);
+    }, []);
+
+    useEffect(() => {
+        updateAgencyModeDropdown();
+    }, [agency]);
+
+    function updateAgencyModeDropdown() {
+        if (agency.length > 0) {
+            let agencyName = document.getElementById(agencyNameId);
+            let agencyNameValue = agencyName.options[agencyName.selectedIndex].text;
+            
+            setAgencyModesApi(setAgencyModes, agencyName.value);
+        } else {
+            
+        }
+    }
+
+    function updateGraphData() {
+        let ntdId = document.getElementById(agencyNameId).value;
+        let modeTos = document.getElementById(agencyModeId).value;
+        let arr = modeTos.split("_");
+        let mode = arr[0];
+        let tos = arr[1];
+        setLineGraphDataApi(setGraphData, ntdId, mode, tos)
+    }
+
+    return (
+        <div id="time_series_panel">
+            <h5>Time Series Data</h5>
+        <table id="time_series_table">
+        <tbody>
+            <tr>
+                <td className="col_1">Agency Name</td>
+                <td className="col_2">
+                    <select id={agencyNameId} name={agencyNameId} onChange={updateAgencyModeDropdown}>
+                        {agency.map(function(agency) {
+                            return <MetroTimeSeriesAgencyOption agency={agency} />;
+                            })
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td className="col_1">Agency Mode</td>
+                <td className="col_2">
+                    <select id={agencyModeId} name={agencyModeId}>
+                        {agencyModes.map(function(agencyMode) {
+                            return <MetroTimeSeriesAgencyModeOption agencyMode={agencyMode} />;
+                            })
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td className="col_1"></td>
+                <td className="col_2">
+                    <input className="btn btn-primary" onClick={updateGraphData} id="search_button" type="button" value="Query" />
+                </td>
+            </tr>
+        </tbody>
+        </table>
+        
+        <LineGraphComponent graphId={graphId} graphData={graphData}/>
+
+        </div>
+    )
+}
+
+function LineGraphComponent(props) {
+    let graphId = props.graphId;
+    let graphData = props.graphData;
+
+    useEffect(() => {
+        updateRidershipChart(graphId, graphData);
+    }, [graphData])
+
+    return (
+        <div id={graphId}>
+        </div>
+    );
+}
+
+function updateRidershipChart(graphId, graphData) {
+    let width = 700;
+
+    let date_function = (d) => {
+        let month = String(d.month).padStart(2, '0');
+        let year = d.year;
+        let dt = year + "-" + month + "-01";
+        return Date.parse(dt);
+    }
+    let data_function = (d) => {
+        return d.data;
+    }
+    let chart = LineChart(graphData, {
+        x: date_function,
+        y: data_function,
+        yLabel: "↑ UPT",
+        width,
+        height: 400,
+        color: "steelblue"
+      })
+
+
+    let chartDiv = document.querySelector("#" + graphId);
+    chartDiv.innerHTML = "";
+    chartDiv.append(chart);
+}
+
+
+async function updateLineChart(chart_id, agencyNameId, agencyModeId, chart, setChart) {
+    let ntdId = document.getElementById(agencyNameId);
+
+    let json = await setPieChartTransitModesAPI(setChart, metro, "UPT");
+    let cars = json.portions;
+    let width = 400;
+    chart = PieChart(cars, {
+        name: d => d.category,
+        value: d => d.data,
+        width,
+        height: 150
+    })
+    
+
+    let chartDiv = document.querySelector("#" + chart_id);
+    chartDiv.innerHTML = "";
+    chartDiv.append(chart);
+
+    json = await setPieChartTransitModesAPI(setChart, metro, "PASSENGER_MILES");
+    cars = json.portions;
+    chart = PieChart(cars, {
+        name: d => d.category,
+        value: d => d.data,
+        width,
+        height: 150
+    })
+    // chartDiv.append(chart);
+}
+
+
+function MetroTimeSeriesAgencyModeOption(props) {
+    let agencyMode = props.agencyMode;
+    let m = agencyMode.mode + "_" + agencyMode.typeOfService;
+    return (
+        <option value={m}>{m}</option>
+    )
+}
+
+function MetroTimeSeriesAgencyOption(props) {
+    let agency = props.agency;
+    return (
+        <option value={agency.ntdId}>{agency.agencyName}</option>
+    )
+}
+
+function MetroAreaTransitChart(props) {
+    const [chart, setChart] = useState([]);
+    let cardId = "metro_card_pie_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+
+    useEffect(() => {
+        updatePieChart(cardId, chart, setChart, props.metro);
+    }, []);
+
+
+    return (
+        <div>
+            <h5>UPT by Travel Mode</h5>
+            <div id={cardId}></div>
+        </div>
+        
+    );
+}
+
+async function updatePieChart(chart_id, chart, setChart, metro) {
+    let json = await setPieChartTransitModesAPI(setChart, metro, "UPT");
+    let cars = json.portions;
+    let width = 400;
+    chart = PieChart(cars, {
+        name: d => d.category,
+        value: d => d.data,
+        width,
+        height: 150
+    })
+    
+
+    let chartDiv = document.querySelector("#" + chart_id);
+    chartDiv.innerHTML = "";
+    chartDiv.append(chart);
+
+    json = await setPieChartTransitModesAPI(setChart, metro, "PASSENGER_MILES");
+    cars = json.portions;
+    chart = PieChart(cars, {
+        name: d => d.category,
+        value: d => d.data,
+        width,
+        height: 150
+    })
+    // chartDiv.append(chart);
+}
+
 function MetroAreaTable(props) {
     const [metros, setMetros] = useState([]);
+    const [metrosTransit, setMetrosTransit] = useState([]);
 
     if (props.metro.startsWith("")) {
         useEffect(() => {
             setMetroInfoAPI(setMetros, props.metro);
+            setMetroTransitTypeInfoAPI(setMetrosTransit, props.metro)
         }, [])
     }
 
@@ -131,6 +349,10 @@ function MetroAreaTable(props) {
           <tbody>
               <MetroAreaTablePopulationRow row={metros[0]}/>
               {metros.map(function(metro) {
+                        return <MetroAreaTableRow row={metro} />;
+                    })
+              }
+              {metrosTransit.map(function(metro) {
                         return <MetroAreaTableRow row={metro} />;
                     })
               }
@@ -159,15 +381,70 @@ function MetroAreaTablePopulationRow(props) {
 function MetroAreaTableRow(props) {
     let row = props.row;
     let perCapita = Math.round(row.perCapitaAmount * 10) / 10.0;
+    let description = row.statisticName;
+    if (row.groupType != null) {
+        description += " (" + row.groupType + ")"
+    }
     return (
         <tr>
-                <td className="table_col_attribute">{row.statisticName}</td>
+                <td className="table_col_attribute">{description}</td>
                   <td className="table_col_total">{row.totalAmount.toLocaleString()}</td>
                   <td className="table_col_total_rank">{row.totalRank}</td>
                   <td className="table_col_per_capita">{perCapita}</td>
                   <td className="table_col_per_capita_rank">{row.perCapitaRank}</td>
         </tr>
     )
+}
+
+
+function MetroAreaStackedBarChart(props) {
+    const [chart, setChart] = useState([]);
+    let cardId = "metro_card_stacked_bar_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+
+    useEffect(() => {
+        updateStackedBarChart(cardId, chart, setChart, props.metro);
+    }, []);
+
+
+    return (
+        <div>
+            <h5>UPT Usage by Agency/Travel Mode</h5>
+            <div id={cardId}></div>
+        </div>
+        
+    );
+}
+
+async function updateStackedBarChart(chart_id, chart, setChart, metro) {
+    let json = await setStackedBartChartTransitModesAPI(setChart, metro, "UPT")
+    let data = json;
+    let width = 800;
+    // let ages = [{0: "CB"}, {1: "MB"}, {2: "TB"}, {3: "LR"}, {4: "HR"}, {5: "DR"}];
+    let s = new Set();
+    for (var i = 0; i < data.length; i++) {
+        var datum = data[i];
+        s.add(datum.travelMode);
+    }
+    let ages = [];
+    s.forEach(a => { ages.push(a);
+                      });
+    
+    chart = StackedBarChart(data, {
+        x: d => d.amount / 1000,
+        y: d => d.agencyName,
+        z: d => d.travelMode,
+        xLabel: "UPT (k)",
+        yDomain: d3.groupSort(data, D => d3.sum(D, d => d.amount), d => d.agencyName), // sort y by x
+        zDomain: ages,
+        colors: d3.schemeSpectral[ages.length],
+        width,
+      })
+    
+
+    let chartDiv = document.querySelector("#" + chart_id);
+    chartDiv.innerHTML = "";
+    chartDiv.append(chart);
+
 }
 
 const domContainer = document.querySelector("#app");

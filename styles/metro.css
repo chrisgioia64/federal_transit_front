@@ -9,7 +9,8 @@
 }
 
 .metro_card_title {
-    background-color: rgb(255 245 174);
+    /* background-color: rgb(255 245 174); */
+    background-color: rgb(180, 230, 255);
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid rgb(100, 100, 100);
@@ -25,11 +26,13 @@
 .metro_card_content {
     background-color: rgb(240, 245, 255);
     padding-bottom: 20px;
+    padding: 10px;
 }
 
 .metro_table {
 
 }
+
 
 .metro_table thead {
     font-size: 0.9em;
@@ -40,7 +43,7 @@
 }
 
 .table_col_attribute {
-    width: 150px;
+    width: 200px;
 }
 
 .table_col_total {
