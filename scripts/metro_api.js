@@ -162,6 +162,36 @@ async function setLineGraphDataApi(setGraphData, ntdId, mode, tos) {
 }
 
 
+async function setLineGraphDataApiByMonth(setGraphData, ntdId, mode, tos) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  // console.log("ntdId " + ntdId + ", " + mode + ", " + tos);
+
+  var raw = JSON.stringify({
+    "ntdId": ntdId,
+    "mode": mode,
+    "typeOfService": tos,
+    "type": "UPT"
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  let response = await fetch("http://localhost:8081/query/ridership_data_month", requestOptions);
+  let json = await response.json();
+  // console.log("status: " + response.status);
+  if (response.status == 200) {
+      setGraphData(json);
+  }
+  // console.log("line graph data: " + json);
+  return json;
+}
+
 
 async function setPieChartTransitModesAPI(setChart, metro, statistic) {
   var myHeaders = new Headers();

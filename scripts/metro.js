@@ -114,11 +114,13 @@ function MetroTimeSeriesData(props) {
     let cardId = "metro_card_timeseries_" + props.metro.replaceAll(" ","").replaceAll(",","_");
     let agencyNameId = cardId + "_agency_name";
     let agencyModeId = cardId + "_agency_mode";
+    let typeId = cardId + "_select_type";
     let graphId = cardId + "_graph";
 
     let [agencyModes, setAgencyModes] = useState([]);
 
     let [graphData, setGraphData] = useState([]);
+    let aggregateType = document.getElementById(typeId);
 
     useEffect(() => {
         setAgencies(setAgency, metro);
@@ -145,7 +147,11 @@ function MetroTimeSeriesData(props) {
         let arr = modeTos.split("_");
         let mode = arr[0];
         let tos = arr[1];
-        setLineGraphDataApi(setGraphData, ntdId, mode, tos)
+        if (aggregateType.value == "all") {
+            setLineGraphDataApi(setGraphData, ntdId, mode, tos);
+        } else {
+            setLineGraphDataApiByMonth(setGraphData, ntdId, mode, tos);
+        }
     }
 
     return (
@@ -176,6 +182,15 @@ function MetroTimeSeriesData(props) {
                 </td>
             </tr>
             <tr>
+                <td className="col_1">Type</td>
+                <td className="col_2">
+                    <select id={typeId} name={typeId}>
+                        <option value="all">All</option>
+                        <option value="month">By Month</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td className="col_1"></td>
                 <td className="col_2">
                     <input className="btn btn-primary" onClick={updateGraphData} id="search_button" type="button" value="Query" />
@@ -184,7 +199,7 @@ function MetroTimeSeriesData(props) {
         </tbody>
         </table>
         
-        <LineGraphComponent graphId={graphId} graphData={graphData}/>
+        <LineGraphComponent graphId={graphId} graphData={graphData} aggregateType={aggregateType}/>
 
         </div>
     )
@@ -193,9 +208,10 @@ function MetroTimeSeriesData(props) {
 function LineGraphComponent(props) {
     let graphId = props.graphId;
     let graphData = props.graphData;
+    let aggregateType = props.aggregateType;
 
     useEffect(() => {
-        updateRidershipChart(graphId, graphData);
+        updateRidershipChart(graphId, graphData, aggregateType);
     }, [graphData])
 
     return (
@@ -204,12 +220,15 @@ function LineGraphComponent(props) {
     );
 }
 
-function updateRidershipChart(graphId, graphData) {
+function updateRidershipChart(graphId, graphData, aggregateType) {
     let width = 700;
 
     let date_function = (d) => {
         let month = String(d.month).padStart(2, '0');
         let year = d.year;
+        if (aggregateType.value == "month") {
+            year = "2000";
+        }
         let dt = year + "-" + month + "-01";
         return Date.parse(dt);
     }
