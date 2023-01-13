@@ -61,3 +61,30 @@
 .table_col_per_capita_rank {
     width: 50px;
 }
+
+.pie_chart_div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(0, 18, 183);
+    border-radius: 0.5em;
+    padding: 10px;
+    background-color: white;
+}
+
+.stacked_bar_chart_div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(0, 18, 183);
+    border-radius: 0.5em;
+    padding: 10px;
+    background-color: white;
+}
+
+.time_series_div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(0, 18, 183);
+    border-radius: 0.5em;
+    padding: 10px;
+    background-color: white;
+}

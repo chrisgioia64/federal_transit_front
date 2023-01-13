@@ -149,7 +149,7 @@ function MetroTimeSeriesData(props) {
     }
 
     return (
-        <div id="time_series_panel">
+        <div id="time_series_panel" className="time_series_div">
             <h5>Time Series Data</h5>
         <table id="time_series_table">
         <tbody>
@@ -221,7 +221,7 @@ function updateRidershipChart(graphId, graphData) {
         y: data_function,
         yLabel: "↑ UPT",
         width,
-        height: 400,
+        height: 200,
         color: "steelblue"
       })
 
@@ -285,14 +285,12 @@ function MetroAreaTransitChart(props) {
         updatePieChart(cardId, chart, setChart, props.metro);
     }, []);
 
-
     return (
-        <div>
+        <div className='pie_chart_div'>
             <h5>UPT by Travel Mode</h5>
             <div id={cardId}></div>
         </div>
-        
-    );
+    ); 
 }
 
 async function updatePieChart(chart_id, chart, setChart, metro) {
@@ -399,25 +397,59 @@ function MetroAreaTableRow(props) {
 
 function MetroAreaStackedBarChart(props) {
     const [chart, setChart] = useState([]);
+    const [years, setYears] = useState([]);
+
     let cardId = "metro_card_stacked_bar_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+    let selectId = "metro_card_select_" + props.metro.replaceAll(" ","").replaceAll(",","_");
 
     useEffect(() => {
-        updateStackedBarChart(cardId, chart, setChart, props.metro);
+        setYearsApi(setYears, props.metro);
     }, []);
 
+    useEffect(() => {
+        updateChart();
+    }, [years]);
+
+    function updateChart() {
+        if (years.length > 0) {
+            const yearSelect = document.querySelector("#" + selectId);
+            updateStackedBarChart(cardId, chart, setChart, props.metro, yearSelect.value);
+        }
+    }
 
     return (
-        <div>
+        <div className="stacked_bar_chart_div">
             <h5>UPT Usage by Agency/Travel Mode</h5>
+            <div>
+                <select id={selectId} onChange={updateChart}>
+                {years.map(function(year) {
+                            return <YearOption year={year} />;
+                            })
+                }
+                </select>
+
+            </div>
             <div id={cardId}></div>
         </div>
         
     );
 }
 
-async function updateStackedBarChart(chart_id, chart, setChart, metro) {
-    let json = await setStackedBartChartTransitModesAPI(setChart, metro, "UPT")
+function YearOption(props) {
+    let year = props.year;
+    return (
+        <option value={year}>{year}</option>
+    )
+}
+
+async function setYearsApi(setYears, metro) {
+    let json = await setYearsForMetro(setYears, metro, "UPT");
+}
+
+async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
+    let json = await setStackedBartChartTransitModesAPIYear(setChart, metro, "UPT", year)
     let data = json;
+    console.log("data: " + data);
     let width = 800;
     // let ages = [{0: "CB"}, {1: "MB"}, {2: "TB"}, {3: "LR"}, {4: "HR"}, {5: "DR"}];
     let s = new Set();

@@ -210,3 +210,57 @@ async function setStackedBartChartTransitModesAPI(setChart, metro, statistic) {
   }
   return json;
 }
+
+async function setStackedBartChartTransitModesAPIYear(setChart, metro, statistic, year) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "metropolitanArea": metro,
+    "statistic": statistic,
+    "year": year
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  let response = await fetch("http://localhost:8081/query/stacked_bar_chart_by_year", requestOptions);
+  let json = await response.json();
+  if (response.status == 200) {
+    setChart(json);
+  } else {
+    console.log("error: " + response.status);
+  }
+  return json;
+}
+
+
+async function setYearsForMetro(setYears, metro, statistic) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "metropolitanArea": metro,
+    "statistic": statistic
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  let response = await fetch("http://localhost:8081/query/get_years_of_metro", requestOptions);
+  let json = await response.json();
+  if (response.status == 200) {
+    setYears(json);
+  } else {
+    console.log("error: " + response.status);
+  }
+  return json;
+}
