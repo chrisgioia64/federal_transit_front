@@ -1,5 +1,6 @@
 
 
+
 async function dropDatabaseAPI(setResponse) {
     setResponse("Processing request...");
     var requestOptions = {
@@ -7,9 +8,8 @@ async function dropDatabaseAPI(setResponse) {
         redirect: 'follow'
       };
       
-    const response = await fetch("http://localhost:8081/database/drop", requestOptions)
+    const response = await fetch(API_URL + "/database/drop", requestOptions)
     let text = await response.text();
-    console.log("text: " + text);
     setResponse(text);
     return text;
 }
@@ -21,7 +21,7 @@ async function createDatabaseAPI(setResponse) {
         redirect: 'follow'
       };
       
-    const response = await fetch("http://localhost:8081/database/create", requestOptions)
+    const response = await fetch(API_URL + "/database/create", requestOptions)
     let text = await response.text();
     console.log("text: " + text);
     setResponse(text);
@@ -35,7 +35,7 @@ async function loadMasterAPI(setResponse) {
         redirect: 'follow'
       };
       
-    const response = await fetch("http://localhost:8081/database/load_master/1", requestOptions)
+    const response = await fetch(API_URL + "/database/load_master/1", requestOptions)
     let text = await response.text();
     setResponse(text);
     return text;
@@ -48,7 +48,7 @@ async function numAgenciesAPI(setResponse) {
         redirect: 'follow'
       };
       
-    const response = await fetch("http://localhost:8081/database/num_agencies", requestOptions)
+    const response = await fetch(API_URL + "/database/num_agencies", requestOptions)
     let text = await response.text();
     setResponse(text);
     return text;

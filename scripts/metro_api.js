@@ -5,7 +5,7 @@ async function setStatesAPI(setStates) {
       redirect: 'follow'
     };
 
-    const response = await fetch("http://localhost:8081/query/states", requestOptions);
+    const response = await fetch(API_URL + "/query/states", requestOptions);
     let json = await response.json();
     setStates(json);
     return json;
@@ -26,7 +26,7 @@ async function setMetroAPI(setMetros, state) {
       redirect: 'follow'
     };
 
-    let response = await fetch("http://localhost:8081/query/metro_by_state", requestOptions)
+    let response = await fetch(API_URL + "/query/metro_by_state", requestOptions)
     let json = await response.json();
     setMetros(json);
     return json;
@@ -47,7 +47,7 @@ async function setMetroInfoAPI(setMetros, metro) {
       redirect: 'follow'
     };
 
-    let response = await fetch("http://localhost:8081/query/metro_rank", requestOptions);
+    let response = await fetch(API_URL + "/query/metro_rank", requestOptions);
     let json = await response.json();
     // console.log("status: " + response.status);
     if (response.status == 200) {
@@ -72,7 +72,7 @@ async function setMetroTransitTypeInfoAPI(setMetros, metro) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/metro_rank/transit", requestOptions);
+  let response = await fetch(API_URL + "/query/metro_rank/transit", requestOptions);
   let json = await response.json();
   // console.log("status: " + response.status);
   if (response.status == 200) {
@@ -97,7 +97,7 @@ async function setAgencies(setAgency, metro) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/agency_name_by_metro", requestOptions);
+  let response = await fetch(API_URL + "/query/agency_name_by_metro", requestOptions);
   let json = await response.json();
   // console.log("status: " + response.status);
   if (response.status == 200) {
@@ -122,7 +122,7 @@ async function setAgencyModesApi(setAgencyMode, agencyName) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/agency_modes", requestOptions);
+  let response = await fetch(API_URL + "/query/agency_modes", requestOptions);
   let json = await response.json();
   // console.log("status: " + response.status);
   if (response.status == 200) {
@@ -151,7 +151,7 @@ async function setLineGraphDataApi(setGraphData, ntdId, mode, tos) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/ridership_data", requestOptions);
+  let response = await fetch(API_URL + "/query/ridership_data", requestOptions);
   let json = await response.json();
   // console.log("status: " + response.status);
   if (response.status == 200) {
@@ -182,7 +182,7 @@ async function setLineGraphDataApiByMonth(setGraphData, ntdId, mode, tos) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/ridership_data_month", requestOptions);
+  let response = await fetch(API_URL + "/query/ridership_data_month", requestOptions);
   let json = await response.json();
   // console.log("status: " + response.status);
   if (response.status == 200) {
@@ -209,7 +209,7 @@ async function setPieChartTransitModesAPI(setChart, metro, statistic) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/piechart", requestOptions);
+  let response = await fetch(API_URL + "/query/piechart", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
     setChart(json);
@@ -233,7 +233,7 @@ async function setStackedBartChartTransitModesAPI(setChart, metro, statistic) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/stacked_bar_chart", requestOptions);
+  let response = await fetch(API_URL + "/query/stacked_bar_chart", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
     setChart(json);
@@ -258,7 +258,7 @@ async function setStackedBartChartTransitModesAPIYear(setChart, metro, statistic
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/stacked_bar_chart_by_year", requestOptions);
+  let response = await fetch(API_URL + "/query/stacked_bar_chart_by_year", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
     setChart(json);
@@ -285,10 +285,11 @@ async function setYearsForMetro(setYears, metro, statistic) {
     redirect: 'follow'
   };
 
-  let response = await fetch("http://localhost:8081/query/get_years_of_metro", requestOptions);
+  let response = await fetch(API_URL + "/query/get_years_of_metro", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
     setYears(json);
+    console.log("years: " + json);
   } else {
     console.log("error: " + response.status);
   }

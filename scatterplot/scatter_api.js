@@ -20,7 +20,7 @@ async function query_scatterplot(setScatter, statistic1, transitType1, statistic
         redirect: 'follow'
     };
 
-    let response = await fetch("http://localhost:8081/query/scatterplot", requestOptions)
+    let response = await fetch(API_URL + "/query/scatterplot", requestOptions)
     let json = await response.json();
     console.log("json: " + json);
     setScatter(json);

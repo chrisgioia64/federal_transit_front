@@ -186,7 +186,7 @@ async function loadAggregateStatistics(statistic, entity, travelMode) {
       redirect: 'follow'
     };
 
-    const response = await fetch("http://localhost:8081/query/get_aggregate", requestOptions);
+    const response = await fetch(API_URL + "/query/get_aggregate", requestOptions);
     let json = await response.json();
     return json;
 }
@@ -197,7 +197,7 @@ async function loadNumberAgencies() {
       redirect: 'follow'
     };
 
-    const response = await fetch("http://localhost:8081/database/num_agencies", requestOptions);
+    const response = await fetch(API_URL + "/database/num_agencies", requestOptions);
     let parts = await response.text();
     console.log(parts);
 }
