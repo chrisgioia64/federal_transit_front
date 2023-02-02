@@ -5,14 +5,228 @@ const useEffect = React.useEffect;
 function OurApp() {
     return (
         <div>
+            <SearchComponent/>
             <Header/>
             <StateAreaCards/>
         </div>
     )
 }
 
+function SearchComponent() {
+    const [metro, setMetro] = useState([]);
+    let [show, setShow] = useState(false);
+
+    return (
+        <div>
+            <SearchBar metro={metro} setMetro={setMetro} setShow={setShow}/>
+            <SearchResultPanel metro={metro} show={show} setShow={setShow}/>
+        </div>
+    )
+}
+
+function SearchBar(props) {
+    const [metros, setMetros] = useState([]);
+    
+    let setMetro = props.setMetro;
+    let setShow = props.setShow;
+
+    function searchMetro() {
+        var input = document.getElementById("myInput");
+        setMetro(input.value);
+        setShow(false);
+    }
+
+    useEffect(() => {
+        var countries = ["Angola", "Argentina", "Armenia", "Belarus", "Belize", "China", "Cuba"];
+        setMetroAllAPI(setMetros);
+        autocomplete(document.getElementById("myInput"), metros);
+    }, [metros])
+
+    return (
+    <div className="search_panel">
+        <form autocomplete="off">
+        <div className="autocomplete">
+            <input id="myInput" type="text" name="myCountry" placeholder="Metropolitan Area" />
+        </div>
+        <input type="button" id="searchMetro" value="Search" onClick={searchMetro} />
+        </form>
+    </div>
+    )
+}
+
+function SearchResultPanel(props) {
+    let show = props.show;
+    let setShow = props.setShow;
+
+    let metro = props.metro;
+    let prefix = "metro_search_result";
+    let containerId = prefix + "_container";
+    let containerIdHash = "#" + containerId;
+    let divId = prefix + "_div";
+    let divIdHash = "#" + prefix + "_div";
+
+    
+    function toggleDisplay() {
+        setShow( x => !x);
+        console.log("metro: " + metro);
+    }
+
+    return (
+        <div id={divId} className="metro_card">
+        <div className="metro_card_title">
+        <button onClick={toggleDisplay} className="btn btn-link" type="button" aria-expanded="true" aria-controls={containerId}>
+          {props.metro}
+        </button>
+
+        </div>
+        <div className="metro_card_content" id={containerId}
+            data-parent={divIdHash}>
+            {show && <MetroAreaTable metro={props.metro} />}
+            {show && <MetroAreaTransitChart metro={props.metro} />}
+            {show && <MetroAreaStackedBarChart metro={props.metro} />}
+            {show && <MetroTimeSeriesData metro={props.metro}  />}
+        </div>
+        </div>)
+}
+
+
+function autocomplete(inp, arr) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+    function addActive(x) {
+      /*a function to classify an item as "active":*/
+      if (!x) return false;
+      /*start by removing the "active" class on all items:*/
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      /*add class "autocomplete-active":*/
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      /*a function to remove the "active" class from all autocomplete items:*/
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+    function closeAllLists(elmnt) {
+      /*close all autocomplete lists in the document,
+      except the one passed as an argument:*/
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
+
+function getResults(input, data) {
+    const results = [];
+    let i = 0;
+    for (i = 0; i < data.length; i++) {
+      if (input === data[i].slice(0, input.length)) {
+        results.push(data[i]);
+      }
+    }
+    return results;
+  }
+
+function autocompleteChange(data) {
+    var autocomplete = document.getElementById("autocomplete");
+    var resultsHTML = document.getElementById("result");
+    resultsHTML.onclick = function (event) {
+        const setValue = event.target.innerText;
+        autocomplete.value = setValue;
+        this.innerHTML = "";
+    };
+
+    autocomplete.oninput = function () {
+        let results = [];
+        const userInput = this.value;
+        resultsHTML.innerHTML = "";
+        if (userInput.length > 0) {
+          results = getResults(userInput, data);
+          resultsHTML.style.display = "block";
+          let i = 0;
+          for (i = 0; i < results.length; i++) {
+            resultsHTML.innerHTML += "<li>" + results[i] + "</li>";
+          }
+        }
+    };
+}
+
+
+
+
 function Header() {
-    return <h1>States</h1>
+    return <h1>Metropolitan Areas</h1>
 }
 
 function StateAreaCards() {
@@ -50,21 +264,30 @@ function StateAreaCard(props) {
     const setStateId = props.setStateId;
     let divId = "state_card_" + props.state;
 
-    return (
-        <div className="state_card" id={divId}>
-        <p className="state_title">{props.state}</p>
-        <MetroAreaCards state={props.state} key={props.state} />
-     </div>)
-}
-
-function MetroAreaCards(props) {
     const [metros, setMetros] = useState([]);
 
     useEffect(() => {
         setMetroAPI(setMetros, props.state);
     }, [])
 
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        setShow(metros.length > 0);
+    }, [metros])
+
     return (
+    <div>
+        {show && <MetroAreaCards metros={metros} divId={divId} state={props.state}/>}
+     </div>)
+}
+
+function MetroAreaCards(props) {
+    let metros = props.metros;
+    let divId = props.divId;
+
+    return (
+        <div className="state_card" id={divId}>
+        <p className="state_title">{props.state}</p>
         <ul>
             {metros.map(function(metro) {
                         return <MetroAreaCard metro={metro}
@@ -73,6 +296,7 @@ function MetroAreaCards(props) {
                     })
             }
         </ul>
+        </div>
     )
 
 }
@@ -325,17 +549,52 @@ async function updatePieChart(chart_id, chart, setChart, metro) {
     
 
     let chartDiv = document.querySelector("#" + chart_id);
-    chartDiv.innerHTML = "";
-    chartDiv.append(chart);
+    chartDiv.innerHTML   = "";
+    // chartDiv.append(chart);
 
-    json = await setPieChartTransitModesAPI(setChart, metro, "PASSENGER_MILES");
-    cars = json.portions;
-    chart = PieChart(cars, {
-        name: d => d.category,
-        value: d => d.data,
-        width,
-        height: 150
-    })
+    // json = await setPieChartTransitModesAPI(setChart, metro, "PASSENGER_MILES");
+    // cars = json.portions;
+    // chart = PieChart(cars, {
+    //     name: d => d.category,
+    //     value: d => d.data,
+    //     width,
+    //     height: 150
+    // })
+
+    let series = []
+    let labels = []
+    let i = 0;
+    for (i = 0; i < cars.length; i++) {
+        series.push(cars[i].data);
+        labels.push(cars[i].category);
+    }
+
+    console.log("series:" + series);
+    console.log("labels: " + labels);
+
+    var options = {
+        series: series,
+        chart: {
+        width: 300,
+        type: 'pie',
+      },
+      labels: labels,
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 200
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }]
+      };
+
+      var chart = new ApexCharts(document.querySelector("#" + chart_id), options);
+      chart.render();
+
     // chartDiv.append(chart);
 }
 
@@ -407,7 +666,7 @@ function MetroAreaTableRow(props) {
                 <td className="table_col_attribute">{description}</td>
                   <td className="table_col_total">{row.totalAmount.toLocaleString()}</td>
                   <td className="table_col_total_rank">{row.totalRank}</td>
-                  <td className="table_col_per_capita">{perCapita}</td>
+                  <td className="table_col_per_capita">{perCapita.toFixed(1)}</td>
                   <td className="table_col_per_capita_rank">{row.perCapitaRank}</td>
         </tr>
     )
@@ -468,7 +727,6 @@ async function setYearsApi(setYears, metro) {
 async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
     let json = await setStackedBartChartTransitModesAPIYear(setChart, metro, "UPT", year)
     let data = json;
-    console.log("data: " + data);
     let width = 800;
     // let ages = [{0: "CB"}, {1: "MB"}, {2: "TB"}, {3: "LR"}, {4: "HR"}, {5: "DR"}];
     let s = new Set();

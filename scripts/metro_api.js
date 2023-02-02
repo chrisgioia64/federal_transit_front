@@ -32,6 +32,19 @@ async function setMetroAPI(setMetros, state) {
     return json;
 }
 
+async function setMetroAllAPI(setMetros) {
+  var requestOptions = {
+    method: 'POST',
+    redirect: 'follow'
+  };
+
+  let response = await fetch(API_URL + "/query/metros", requestOptions)
+  let json = await response.json();
+  setMetros(json);
+  return json;
+}
+
+
 async function setMetroInfoAPI(setMetros, metro) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
