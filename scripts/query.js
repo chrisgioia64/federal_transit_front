@@ -38,11 +38,11 @@ async function downloadCsv() {
     let entityValue = entityType.options[entityType.selectedIndex].text;
     let aggregateValue = statisticElement.options[statisticElement.selectedIndex].text;
 
-    var str = "rank; " + entityValue + ";" + aggregateValue + "\n";
+    var str = "\"rank\",\"" + entityValue + "\",\"" + aggregateValue + "\"\n";
     for (let i = 0; i < resultsGlobal.length; i++) {
-        str += (i + 1) + ";";
-        str += resultsGlobal[i].entityName + ";";
-        str += resultsGlobal[i].aggregateStatistic + "\n";
+        str += "\"" + (i + 1) +  "\",";
+        str += "\"" + resultsGlobal[i].entityName + "\",";
+        str += "\"" + resultsGlobal[i].aggregateStatistic + "\"\n";
     }
 
     // const url = window.URL.createObjectURL(str);
