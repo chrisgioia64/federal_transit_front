@@ -5,8 +5,7 @@ const useEffect = React.useEffect;
 function OurApp() {
     return (
         <div>
-            <SearchComponent/>
-            <Header/>
+            {/* <Header/> */}
             <StateAreaCards/>
         </div>
     )
@@ -727,7 +726,7 @@ async function setYearsApi(setYears, metro) {
 async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
     let json = await setStackedBartChartTransitModesAPIYear(setChart, metro, "UPT", year)
     let data = json;
-    let width = 800;
+    let width = 1500;
     // let ages = [{0: "CB"}, {1: "MB"}, {2: "TB"}, {3: "LR"}, {4: "HR"}, {5: "DR"}];
     let s = new Set();
     for (var i = 0; i < data.length; i++) {
@@ -739,10 +738,10 @@ async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
                       });
     
     chart = StackedBarChart(data, {
-        x: d => d.amount / 1000,
+        x: d => d.amount / 1000000,
         y: d => d.agencyName,
         z: d => d.travelMode,
-        xLabel: "UPT (k)",
+        xLabel: "UPT (millions)",
         yDomain: d3.groupSort(data, D => d3.sum(D, d => d.amount), d => d.agencyName), // sort y by x
         zDomain: ages,
         colors: d3.schemeSpectral[ages.length],

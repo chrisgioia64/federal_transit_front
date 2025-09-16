@@ -9,7 +9,7 @@ function StackedBarChart(data, {
     marginTop = 50, // top margin, in pixels
     marginRight = 100, // right margin, in pixels
     marginBottom = 0, // bottom margin, in pixels
-    marginLeft = 320, // left margin, in pixels
+    marginLeft = 450, // left margin, in pixels
     width = 640, // outer width, in pixels
     height, // outer height, in pixels
     xType = d3.scaleLinear, // type of x-scale
@@ -94,7 +94,9 @@ function StackedBarChart(data, {
             .attr("y", -22)
             .attr("fill", "currentColor")
             .attr("text-anchor", "end")
-            .text(xLabel));
+            .text(xLabel)
+        )
+        .attr("font-size", 14);
   
     const bar = svg.append("g")
       .selectAll("g")
@@ -108,13 +110,14 @@ function StackedBarChart(data, {
         .attr("y", ({i}) => yScale(Y[i]))
         .attr("width", ([x1, x2]) => Math.abs(xScale(x1) - xScale(x2)))
         .attr("height", yScale.bandwidth());
-  
+
     if (title) bar.append("title")
         .text(({i}) => title(i));
   
     svg.append("g")
         .attr("transform", `translate(${xScale(0)},0)`)
-        .call(yAxis);
-  
+        .call(yAxis)
+        .attr("font-size", 14);
+    
     return Object.assign(svg.node(), {scales: {color}});
   }

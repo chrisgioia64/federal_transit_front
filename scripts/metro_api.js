@@ -8,6 +8,7 @@ async function setStatesAPI(setStates) {
     const response = await fetch(API_URL + "/query/states", requestOptions);
     let json = await response.json();
     setStates(json);
+    
     return json;
 }
 
@@ -33,9 +34,14 @@ async function setMetroAPI(setMetros, state) {
 }
 
 async function setMetroAllAPI(setMetros) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Access-Control-Allow-Origin", "*");
+
   var requestOptions = {
     method: 'POST',
-    redirect: 'follow'
+    redirect: 'follow',
+    headers: myHeaders
   };
 
   let response = await fetch(API_URL + "/query/metros", requestOptions)

@@ -4,7 +4,7 @@ function PieChart(data, {
     title, // given d in data, returns the title text
     width = 640, // outer width, in pixels
     height = 400, // outer height, in pixels
-    innerRadius = 0, // inner radius of pie, in pixels (non-zero for donut)
+    innerRadius = 50, // inner radius of pie, in pixels (non-zero for donut)
     outerRadius = Math.min(width, height) / 2, // outer radius of pie, in pixels
     labelRadius = (innerRadius * 0.2 + outerRadius * 0.8), // center radius of labels
     format = ",", // a format specifier for values (in the label)
