@@ -1,0 +1,26 @@
+.audio-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.audio-table td,
+.audio-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.audio-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.audio-table tr:hover {
+    background-color: #ddd;
+}
+
+.audio-table .text {
+    width: 40%;
+}
+
+.audio-table .audio {
+    width: 60%;
+}
