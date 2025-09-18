@@ -83,6 +83,7 @@ function SearchResultPanel(props) {
             {show && <MetroAreaTable metro={props.metro} />}
             {show && <MetroAreaTransitChart metro={props.metro} />}
             {show && <MetroAreaStackedBarChart metro={props.metro} />}
+            {show && <MetroAreaStackedBarChartAgency metro={props.metro} />}
             {show && <MetroTimeSeriesData metro={props.metro}  />}
         </div>
         </div>)
@@ -325,6 +326,7 @@ function MetroAreaCard(props) {
             data-parent={divIdHash}>
             {show && <MetroAreaTable metro={props.metro} key={props.metro} />}
             {show && <MetroAreaTransitChart metro={props.metro} />}
+            {show && <MetroAreaStackedBarChartAgency metro={props.metro} />}
             {show && <MetroAreaStackedBarChart metro={props.metro} />}
             {show && <MetroTimeSeriesData metro={props.metro} />}
         </div>
@@ -712,12 +714,15 @@ function MetroAreaStackedBarChart(props) {
     );
 }
 
+
+
 function YearOption(props) {
     let year = props.year;
     return (
         <option value={year}>{year}</option>
     )
 }
+
 
 async function setYearsApi(setYears, metro) {
     let json = await setYearsForMetro(setYears, metro, "UPT");
@@ -736,6 +741,10 @@ async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
     let ages = [];
     s.forEach(a => { ages.push(a);
                       });
+    console.log("ages: ");
+    console.log(ages);
+    console.log("data: ");
+    console.log(data);
     
     chart = StackedBarChart(data, {
         x: d => d.amount / 1000000,
@@ -752,8 +761,136 @@ async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
     let chartDiv = document.querySelector("#" + chart_id);
     chartDiv.innerHTML = "";
     chartDiv.append(chart);
+}
+
+async function setYearsApi(setYears, metro) {
+    let json = await setYearsForMetro(setYears, metro, "UPT");
+}
+
+async function setAgencyStat(setStat) {
+    let stats = ["Farebox Recovery", "Operating Expense Per Person"];
+    setStat(stats);
+}
+
+function AgencyStatOption(props) {
+    let stat = props.stat;
+    return (
+        <option value={stat}>{stat}</option>
+    )
+}
+
+function MetroAreaStackedBarChartAgency(props) {
+    const [chart, setChart] = useState([]);
+    const [years, setYears] = useState([]);
+    // const [stat, setStat] = useState([]);
+
+    let cardId = "metro_card_stacked_bar_agency_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+    let selectId = "metro_card_select_agency_" + props.metro.replaceAll(" ","").replaceAll(",","_");
+
+    let stats = ["Farebox Recovery", "Operating Expense Per Person", "Miles per Trip", "Operating Expense per Trip"];
+    let stat = stats[0];
+
+    useEffect(() => {
+        updateChart();
+    }, []);
+
+    
+    function updateChart() {
+        // if (years.length > 0) {
+            // const yearSelect = document.querySelector("#" + selectId);
+            stat = document.getElementById(selectId).value;
+            console.log("stat selected: " + stat);
+            let statresult = getAgencyStatMap(stat);
+            console.log("statresult: ");
+            console.log(statresult);
+            updateStackedBarChartAgency(cardId, chart, setChart, props.metro, statresult);
+        //
+    }
+
+    return (
+        <div className="stacked_bar_chart_div">
+            <h5>Statistics by Agency</h5>
+            <div>
+                <select id={selectId} onChange={updateChart}>
+                {stats.map(function(stat) {
+                            return <AgencyStatOption stat={stat} />;
+                            })
+                }
+                </select>
+
+            </div>
+            <div id={cardId}></div>
+        </div>
+        
+    );
+}
+
+function getAgencyStatMap(stat) {
+    if (stat === "Farebox Recovery") {
+        return {
+            'attribute' : 'fareboxRecovery',
+            'title' : 'Farebox Recovery Ratio by Agency',
+            'xLabel' : 'Farebox Recovery Ratio (%)',
+            'valueFunction' : (d) => d.fareboxRecovery * 100
+        }
+    } else if (stat == 'Operating Expense Per Person') {
+        return {
+            'attribute' : 'operationCostPerPerson',
+            'title' : 'Operating Expense per Person by Agency',
+            'xLabel' : 'Operating Expense per Person',
+            'valueFunction' : (d) => d.operationCostPerPerson
+        }
+    } else if (stat == 'Miles per Trip') {
+        return {
+            'attribute' : 'milesPerTrip',
+            'title' : 'Miles per Trip by Agency',
+            'xLabel' : 'Miles per Trip',
+            'valueFunction' : (d) => d.milesPerTrip
+        }
+    } else if (stat == 'Operating Expense per Trip') {
+        return {
+            'attribute' : 'operatingExpensePerTrip',
+            'title' : 'Operating Expense per Trip by Agency',
+            'xLabel' : 'Operating Expense per Trip',
+            'valueFunction' : (d) => d.operatingExpensePerTrip
+        }
+    }
 
 }
+
+async function updateStackedBarChartAgency(chart_id, chart, setChart, metro, stat) {
+    let json = await setStackedBartChartAgency(setChart, metro)
+    let data = json;
+    let width = 1500;
+    // let ages = [{0: "CB"}, {1: "MB"}, {2: "TB"}, {3: "LR"}, {4: "HR"}, {5: "DR"}];
+    let s = new Set();
+    for (var i = 0; i < data.length; i++) {
+        var datum = data[i];
+        s.add(datum.travelMode);
+    }
+    let ages = [];
+    s.forEach(a => { ages.push(a);
+                      });
+    
+    
+    chart = StackedBarChart(data, {
+        x: stat.valueFunction,
+        y: d => d.agencyName,
+        z: d => d.travelMode,
+        xLabel: stat.xLabel,
+        yDomain: d3.groupSort(data, D => d3.sum(D, stat.valueFunction), d => d.agencyName), // sort y by x
+        zDomain: ages,
+        colors: d3.schemeSpectral[ages.length],
+        width,
+      })
+    
+
+    let chartDiv = document.querySelector("#" + chart_id);
+    chartDiv.innerHTML = "";
+    chartDiv.append(chart);
+}
+
+
 
 const domContainer = document.querySelector("#app");
 const root = ReactDOM.createRoot(domContainer);

@@ -277,7 +277,35 @@ async function setStackedBartChartTransitModesAPIYear(setChart, metro, statistic
     redirect: 'follow'
   };
 
+  console.log("set stacked bar chart")
   let response = await fetch(API_URL + "/query/stacked_bar_chart_by_year", requestOptions);
+  let json = await response.json();
+  if (response.status == 200) {
+    setChart(json);
+    console.log("stacked bar chart by year: " + json);
+  } else {
+    console.log("error: " + response.status);
+  }
+  return json;
+}
+
+async function setStackedBartChartAgency(setChart, metro) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "value": metro,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  console.log("set stacked bar chart")
+  let response = await fetch(API_URL + "/query/agency_data", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
     setChart(json);
