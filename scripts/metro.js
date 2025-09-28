@@ -81,6 +81,7 @@ function SearchResultPanel(props) {
         <div className="metro_card_content" id={containerId}
             data-parent={divIdHash}>
             {show && <MetroAreaTable metro={props.metro} />}
+            {show && <MetroAreaPopulationArea metro={props.metro} />}
             {show && <MetroAreaTransitChart metro={props.metro} />}
             {show && <MetroAreaStackedBarChart metro={props.metro} />}
             {show && <MetroAreaStackedBarChartAgency metro={props.metro} />}
@@ -324,7 +325,8 @@ function MetroAreaCard(props) {
         </div>
         <div className="metro_card_content" id={containerId}
             data-parent={divIdHash}>
-            {show && <MetroAreaTable metro={props.metro} key={props.metro} />}
+            {/* {show && <MetroAreaTable metro={props.metro} key={props.metro} />} */}
+            {show && <MetroAreaPopulationArea metro={props.metro} />}
             {show && <MetroAreaTransitChart metro={props.metro} />}
             {show && <MetroAreaStackedBarChartAgency metro={props.metro} />}
             {show && <MetroAreaStackedBarChart metro={props.metro} />}
@@ -541,6 +543,7 @@ async function updatePieChart(chart_id, chart, setChart, metro) {
     let json = await setPieChartTransitModesAPI(setChart, metro, "UPT");
     let cars = json.portions;
     let width = 400;
+    
     chart = PieChart(cars, {
         name: d => d.category,
         value: d => d.data,
@@ -570,9 +573,6 @@ async function updatePieChart(chart_id, chart, setChart, metro) {
         labels.push(cars[i].category);
     }
 
-    console.log("series:" + series);
-    console.log("labels: " + labels);
-
     var options = {
         series: series,
         chart: {
@@ -599,6 +599,117 @@ async function updatePieChart(chart_id, chart, setChart, metro) {
     // chartDiv.append(chart);
 }
 
+function MetroAreaPopulationArea(props) {
+    // let json = await setPieChartTransitModesAPI(setChart, props.metro, "UPT");
+    
+    const [metros, setMetros] = useState([]);
+    const [metrosTransit, setMetrosTransit] = useState([]);
+    const [transit, setTransit] = useState([]);
+
+    console.log("props.metro: " + props.metro);
+    if (props.metro.startsWith("")) {
+        useEffect(() => {
+                setMetroInfoAPI(setMetros, props.metro);
+                setMetroTransitTypeInfoAPI(setMetrosTransit, props.metro)
+                setTransitModesAPI(setTransit, props.metro, "UPT")
+            }, [])
+    }
+
+    let rail = '50%';
+
+    return (
+        <div className='population_area_div'>
+            
+            <table className="population_table">
+             <tr>
+                <th className="table_col_img"></th>
+                <th className="table_col_attribute"></th>
+                <th className="table_col_total">Total</th>
+                <th className="table_col_total_rank">Rank</th>
+                <th className="table_col_other"></th>
+             </tr>
+              <tr>
+                <td className="table_col_img">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                    </svg>
+
+                </td>
+                <td className="table_col_attribute">Population</td>
+                  <td className="table_col_total">{metros.length == 0 ? 0 : metros[0].population.toLocaleString()}</td>
+                  <td className="table_col_total_rank">{metros == 0 ? 0 : metros[0].populationRank}</td>
+                <td className="table_col_other"></td>
+              </tr>
+
+            <tr>
+                <td className="table_col_img">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bus-front-fill" viewBox="0 0 16 16">
+                    <path d="M16 7a1 1 0 0 1-1 1v3.5c0 .818-.393 1.544-1 2v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V14H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a2.5 2.5 0 0 1-1-2V8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1V2.64C1 1.452 1.845.408 3.064.268A44 44 0 0 1 8 0c2.1 0 3.792.136 4.936.268C14.155.408 15 1.452 15 2.64V4a1 1 0 0 1 1 1zM3.552 3.22A43 43 0 0 1 8 3c1.837 0 3.353.107 4.448.22a.5.5 0 0 0 .104-.994A44 44 0 0 0 8 2c-1.876 0-3.426.109-4.552.226a.5.5 0 1 0 .104.994M8 4c-1.876 0-3.426.109-4.552.226A.5.5 0 0 0 3 4.723v3.554a.5.5 0 0 0 .448.497C4.574 8.891 6.124 9 8 9s3.426-.109 4.552-.226A.5.5 0 0 0 13 8.277V4.723a.5.5 0 0 0-.448-.497A44 44 0 0 0 8 4m-3 7a1 1 0 1 0-2 0 1 1 0 0 0 2 0m8 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m-7 0a1 1 0 0 0 1 1h2a1 1 0 1 0 0-2H7a1 1 0 0 0-1 1"/>
+                    </svg>
+
+                </td>
+                <td className="table_col_attribute">Trips per Person</td>
+                  <td className="table_col_total">{metros.length == 0 ? 0 : metros[0].perCapitaAmount.toFixed(1)}</td>
+                  <td className="table_col_total_rank">{metros.length == 0 ? 0 : metros[0].perCapitaRank.toLocaleString()}</td>
+                <td className="table_col_other"></td>
+            </tr>
+
+            <tr>
+                <td className="table_col_img">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cone-striped" viewBox="0 0 16 16">
+                        <path d="m9.97 4.88.953 3.811C10.159 8.878 9.14 9 8 9s-2.158-.122-2.923-.309L6.03 4.88C6.635 4.957 7.3 5 8 5s1.365-.043 1.97-.12m-.245-.978L8.97.88C8.718-.13 7.282-.13 7.03.88L6.275 3.9C6.8 3.965 7.382 4 8 4s1.2-.036 1.725-.098m4.396 8.613a.5.5 0 0 1 .037.96l-6 2a.5.5 0 0 1-.316 0l-6-2a.5.5 0 0 1 .037-.96l2.391-.598.565-2.257c.862.212 1.964.339 3.165.339s2.303-.127 3.165-.339l.565 2.257z"/>
+                        </svg>
+
+                </td>
+                <td className="table_col_attribute">Operating Expenses per Person</td>
+                  <td className="table_col_total">${metros.length == 0 ? 0 : metros[2].perCapitaAmount.toFixed(0)}</td>
+                  <td className="table_col_total_rank">{metros.length == 0 ? 0 : metros[2].perCapitaRank.toLocaleString()}</td>
+                  <td className="table_col_other"></td>
+            </tr>
+            
+            <tr>
+                <td className="table_col_img">
+
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-coin" viewBox="0 0 16 16">
+                    <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518z"/>
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12"/>
+                    </svg>
+
+                </td>
+                <td className="table_col_attribute">Fares per Person</td>
+                  <td className="table_col_total">${metros.length == 0 ? 0 : metros[3].perCapitaAmount.toFixed(0)}</td>
+                  <td className="table_col_total_rank">{metros.length == 0 ? 0 : metros[3].perCapitaRank.toLocaleString()}</td>
+                  <td className="table_col_other"></td>
+            </tr>
+
+            <tr>
+                <td className="table_col_img">
+
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-train-front-fill" viewBox="0 0 16 16">
+                    <path d="M10.621.515C8.647.02 7.353.02 5.38.515c-.924.23-1.982.766-2.78 1.22C1.566 2.322 1 3.432 1 4.582V13.5A2.5 2.5 0 0 0 3.5 16h9a2.5 2.5 0 0 0 2.5-2.5V4.583c0-1.15-.565-2.26-1.6-2.849-.797-.453-1.855-.988-2.779-1.22ZM6.5 2h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m-2 2h7A1.5 1.5 0 0 1 13 5.5v2A1.5 1.5 0 0 1 11.5 9h-7A1.5 1.5 0 0 1 3 7.5v-2A1.5 1.5 0 0 1 4.5 4m.5 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0m0 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0m8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3-1a1 1 0 1 1 0 2 1 1 0 0 1 0-2M4 5.5a.5.5 0 0 1 .5-.5h3v3h-3a.5.5 0 0 1-.5-.5zM8.5 8V5h3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5z"/>
+                    </svg>
+
+                </td>
+                <td className="table_col_attribute">Transit Usage</td>
+                  <td colSpan='3'>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style={{"width": `${transit.rail}%`}} aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">Rail </div>
+                        <div class="progress-bar bg-success" role="progressbar" style={{"width": `${transit.bus}%`}} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Bus </div>
+                        <div class="progress-bar bg-warning" role="progressbar" style={{"width": `${transit.demand}%`}} aria-valuenow='20' aria-valuemin="0" aria-valuemax="100">Demand</div>
+                    </div>
+
+                  </td>
+            </tr>
+
+              </table>
+        </div>
+    )
+}
+
 function MetroAreaTable(props) {
     const [metros, setMetros] = useState([]);
     const [metrosTransit, setMetrosTransit] = useState([]);
@@ -611,6 +722,8 @@ function MetroAreaTable(props) {
     }
 
     let row = metros[0];
+    console.log("metros: ");
+    console.log(metros)
 
     return (
       <table className="metro_table">
@@ -741,10 +854,7 @@ async function updateStackedBarChart(chart_id, chart, setChart, metro, year) {
     let ages = [];
     s.forEach(a => { ages.push(a);
                       });
-    console.log("ages: ");
-    console.log(ages);
-    console.log("data: ");
-    console.log(data);
+    
     
     chart = StackedBarChart(data, {
         x: d => d.amount / 1000000,
@@ -787,7 +897,7 @@ function MetroAreaStackedBarChartAgency(props) {
     let cardId = "metro_card_stacked_bar_agency_" + props.metro.replaceAll(" ","").replaceAll(",","_");
     let selectId = "metro_card_select_agency_" + props.metro.replaceAll(" ","").replaceAll(",","_");
 
-    let stats = ["Farebox Recovery", "Operating Expense Per Person", "Miles per Trip", "Operating Expense per Trip"];
+    let stats = ["Farebox Recovery", "Operating Expense Per Person", "Miles per Trip", "Operating Expense per Trip", "Operating Expense per Mile"];
     let stat = stats[0];
 
     useEffect(() => {
@@ -853,6 +963,13 @@ function getAgencyStatMap(stat) {
             'title' : 'Operating Expense per Trip by Agency',
             'xLabel' : 'Operating Expense per Trip',
             'valueFunction' : (d) => d.operatingExpensePerTrip
+        }
+    } else if (stat == 'Operating Expense per Mile') {
+        return {
+            'attribute' : 'operatingExpensePerMile',
+            'title' : 'Operating Expense per Mile by Agency',
+            'xLabel' : 'Operating Expense per Mile',
+            'valueFunction' : (d) => d.operatingExpensePerMile
         }
     }
 

@@ -30,7 +30,7 @@
 }
 
 .metro_card_content {
-    background-color: rgb(240, 245, 255);
+    /* background-color: rgb(240, 245, 255); */
     /* padding-bottom: 20px;   */
     /* padding: 10px; */
 }
@@ -53,6 +53,10 @@
     margin-left: 20px;
 }
 
+.table_col_img {
+  width: 35px;
+}
+
 .table_col_attribute {
     width: 300px;
 }
@@ -67,6 +71,10 @@
     text-align: right;
 }
 
+.table_col_other {
+  width: 200px;
+}
+
 .table_col_per_capita {
     width: 100px;
     text-align: right;
@@ -77,32 +85,42 @@
     text-align: right;
 }
 
+.population_area_div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 2px solid rgb(200, 220, 255);
+    border-radius: 0.5em;
+    padding: 10px;
+    background-color: rgb(230,240,255);
+    font-size: 1.4em;
+}
+
 .pie_chart_div {
     margin-top: 20px;
     margin-bottom: 20px;
-    border: 1px solid rgb(0, 18, 183);
+    border: 2px solid rgb(200, 220, 255);
     border-radius: 0.5em;
     padding: 10px;
-    background-color: white;
+    background-color: rgb(230,240,255);
 }
 
 .stacked_bar_chart_div {
     margin-top: 20px;
     margin-bottom: 20px;
-    border: 1px solid rgb(0, 18, 183);
+    border: 2px solid rgb(200, 220, 255);
     border-radius: 0.5em;
     padding: 10px;
-    background-color: white;
+    background-color: rgb(230,240,255);
     font-size: 1.4em;
 }
 
 .time_series_div {
     margin-top: 20px;
     margin-bottom: 20px;
-    border: 1px solid rgb(0, 18, 183);
+    border: 2px solid rgb(200, 220, 255);
     border-radius: 0.5em;
     padding: 10px;
-    background-color: white;
+    background-color: rgb(230,240,255);
 }
 
 .search_panel {

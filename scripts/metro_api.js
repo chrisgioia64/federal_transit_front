@@ -70,6 +70,8 @@ async function setMetroInfoAPI(setMetros, metro) {
     let json = await response.json();
     // console.log("status: " + response.status);
     if (response.status == 200) {
+      // console.log("setting metros");
+      // console.log(json);
         setMetros(json);
     }
     // console.log(json);
@@ -236,6 +238,53 @@ async function setPieChartTransitModesAPI(setChart, metro, statistic) {
   return json;
 }
 
+async function setTransitModesAPI(setTransit, metro, statistic) {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "metropolitanArea": metro,
+    "statistic": statistic
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  let response = await fetch(API_URL + "/query/piechart", requestOptions);
+  let json = await response.json();
+  if (response.status == 200) {
+    let bus = getTransitMode(json, "Bus");
+    let rail = getTransitMode(json, "Rail");
+    let demand = getTransitMode(json, "Demand");
+    let total = bus + rail + demand;
+    let busPercent = (bus / total) * 100;
+    let railPercent = (rail / total) * 100;
+    let demandPercent = (demand / total) * 100;
+    let body = {
+      bus: busPercent,
+      rail: railPercent,
+      demand: demandPercent
+    }
+    console.log("body")
+    console.log(body)
+    setTransit(body);
+  }
+  return json;
+}
+
+function getTransitMode(json, mode) {
+  for (let i = 0; i < json.portions.length; i++) {
+    if (json.portions[i].category == mode) {
+      return json.portions[i].data;
+    }
+  }
+  return 0;
+}
+
 async function setStackedBartChartTransitModesAPI(setChart, metro, statistic) {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -277,7 +326,6 @@ async function setStackedBartChartTransitModesAPIYear(setChart, metro, statistic
     redirect: 'follow'
   };
 
-  console.log("set stacked bar chart")
   let response = await fetch(API_URL + "/query/stacked_bar_chart_by_year", requestOptions);
   let json = await response.json();
   if (response.status == 200) {
@@ -336,7 +384,6 @@ async function setYearsForMetro(setYears, metro, statistic) {
   let json = await response.json();
   if (response.status == 200) {
     setYears(json);
-    console.log("years: " + json);
   } else {
     console.log("error: " + response.status);
   }
